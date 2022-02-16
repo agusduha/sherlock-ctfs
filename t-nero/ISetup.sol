@@ -1,4 +1,4 @@
-pragma solidity 0.8.4;
+pragma solidity 0.8.7;
 
 interface ISetup {
     event Deployed(address instance);

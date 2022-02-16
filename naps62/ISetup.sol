@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: None
-pragma solidity 0.8.4;
+pragma solidity 0.7.2;
 
 interface ISetup {
     event Deployed(address instance);

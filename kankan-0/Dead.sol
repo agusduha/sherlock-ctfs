@@ -1,6 +1,6 @@
 
 
-pragma solidity 0.8.4;
+pragma solidity 0.7.4;
 contract Dead {
 
     uint public fee = 1000 ether;

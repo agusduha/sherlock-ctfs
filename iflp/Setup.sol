@@ -1,4 +1,4 @@
-pragma solidity 0.8.4;
+pragma solidity 0.7.0;
 
 import "./ISetup.sol";
 import "./ExampleQuizExploit.sol";
