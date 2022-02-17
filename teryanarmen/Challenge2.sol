@@ -31,31 +31,31 @@ contract Challenge2 {
     }
 
     enum State {
-        ZERO,
-        ONE,
+        THREE,
         TWO,
-        THREE
+        ONE,
+        ZERO
     }
 
     constructor() payable {
         require(msg.value == 1 ether, "cheap");
     }
 
-    function first() public onlyNotContract onlyState(State.ZERO) {
-        winner = msg.sender;
+    function first() public onlyWinner onlyNotContract onlyState(State.ONE) {
+        state = State.ZERO;
+    }
+
+    function second() public onlyWinner onlyContract onlyState(State.TWO) {
+    require(ICalled(msg.sender).sup() == 1337, "not leet");
         state = State.ONE;
     }
 
-    function second() public onlyWinner onlyContract onlyState(State.ONE) {
-        require(ICalled(msg.sender).sup() == 1337, "not leet");
+    function third() public onlyNotContract onlyState(State.THREE) {
+        winner = msg.sender;
         state = State.TWO;
     }
 
-    function third() public onlyWinner onlyNotContract onlyState(State.TWO) {
-        state = State.THREE;
-    }
-
-    function fourth() public onlyWinner onlyContract onlyState(State.THREE) {
+    function fourth() public onlyWinner onlyContract onlyState(State.ZERO) {
         require(ICalled(msg.sender).sup() == 80085, "not boobs");
         msg.sender.transfer(address(this).balance);
     }
