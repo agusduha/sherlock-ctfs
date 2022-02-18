@@ -4,22 +4,22 @@ pragma solidity 0.7.6;
 import "./Challenge2.sol";
 
 interface ISetup {
-    event Deployed(address instance);
+    event Deployed(address challenge);
 
     function isSolved() external view returns (bool);
 }
 
 contract Setup is ISetup {
-    Challenge2 public instance;
+    Challenge2 public challenge;
 
     constructor() payable {
         require(msg.value == 1 ether);
 
-        instance = new Challenge2{value: 1 ether}();
-        emit Deployed(address(instance));
+        challenge = new Challenge2{value: 1 ether}();
+        emit Deployed(address(challenge));
     }
 
     function isSolved() external view override returns (bool) {
-        return address(instance).balance == 0;
+        return address(challenge).balance == 0;
     }
 }
