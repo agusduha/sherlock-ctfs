@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/StorageSlot.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "hardhat/console.sol";
 
 contract Unbreakable is ERC20, Ownable {
     struct Solution {
@@ -47,8 +48,12 @@ contract Unbreakable is ERC20, Ownable {
     }
 
     function challenge1(uint256 slot, bytes32 value) internal returns (bool) {
+        console.log("CHALLENGE 1");
         require(slot != 6, "Don't touch!");
+        console.logBytes32(StorageSlot.getBytes32Slot(bytes32(slot)).value);
         StorageSlot.getBytes32Slot(bytes32(slot)).value = value;
+        console.log("SOLVER", solver);
+        console.log("OWNER", owner());
         return solver == owner();
     }
 
@@ -56,6 +61,7 @@ contract Unbreakable is ERC20, Ownable {
         internal
         returns (bool)
     {
+        console.log("CHALLENGE 2");
         // you made it very far! Take some tokens if you can ;)
         // Please just take `contract_share` % of the total supply
         // so the protocol can sponsor future CTFs
@@ -77,6 +83,7 @@ contract Unbreakable is ERC20, Ownable {
     }
 
     function challenge3() internal view returns (bool) {
+        console.log("CHALLENGE 3");
         return !(tx.origin == solver || Address.isContract(solver));
     }
 
@@ -86,6 +93,9 @@ contract Unbreakable is ERC20, Ownable {
         onlyPrivate
         returns (bool)
     {
+        console.log("ARRANCO");
+        // console.log(solution.ch2_amount);
+        // console.log(solution.ch2_error);
         return
             challenge1(solution.ch1_slot, solution.ch1_value) &&
             challenge2(solution.ch2_amount, solution.ch2_error) &&
@@ -96,9 +106,12 @@ contract Unbreakable is ERC20, Ownable {
         if (solver == address(0)) {
             solver = msg.sender;
         }
+        console.log("ATACO");
         (bool success, bytes memory data) = address(this).call(
             abi.encodeCall(this.solveChallenge, (solution))
         );
+        console.log("RESULTADO", success);
+        console.logBytes(data);
         if (success) {
             solved = abi.decode(data, (bool));
             if (solved) {
@@ -117,12 +130,27 @@ contract Unbreakable is ERC20, Ownable {
     }
 
     function Error(string memory error) external onlyBroken onlyPrivate {
+        console.log("ENTRO ERROR");
+        console.log(error);
         // something broke, try to fix it
         (bool success, bytes memory data) = address(this).call(bytes(error));
+
+        console.log("1ER CALL", success);
+        console.logBytes(data);
+
         if (!success) {
+            console.log("ENTRO ERROR IF");
             // try again
             (success, data) = address(this).call(data);
+
+            console.log("2DO CALL", success);
+            console.logBytes(data);
+
             bool isfixed = abi.decode(data, (bool));
+
+            console.log("FIXED", isfixed);
+            console.log("RESULTADO", success && !isfixed);
+
             // escalate
             external_repair_requested = success && !isfixed;
         }

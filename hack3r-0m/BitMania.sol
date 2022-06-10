@@ -16,16 +16,22 @@ contract BitMania {
     {
         bytes memory flag = bytes(stringFlag);
         for (uint256 i; i < flag.length; i++) {
-            if (i > 0) flag[i] ^= flag[i - 1];
-            flag[i] ^= flag[i] >> 4;
-            flag[i] ^= flag[i] >> 3;
-            flag[i] ^= flag[i] >> 2;
-            flag[i] ^= flag[i] >> 1;
+            if (i > 0) flag[i] ^= flag[i - 1]; // (b ^ 34) = a
+            flag[i] ^= flag[i] >> 4; // /16     a ^ (a / 16) = z
+            flag[i] ^= flag[i] >> 3; // /8      z ^ (z / 8) = y
+            flag[i] ^= flag[i] >> 2; // /4      y ^ (y / 4) = x
+            flag[i] ^= flag[i] >> 1; // /2      x ^ (x / 2) = 7
         }
+
+        // ((b ^ 34) ^ ((b ^ 34) / 16)) = z
+        // ((b ^ 34) ^ ((b ^ 34) / 16)) ^ (((b ^ 34) ^ ((b ^ 34) / 16)) / 8) = y
+        // y ^ (y / 4) = x
+        // x ^ (x / 2) = 7
 
         return flag;
     }
 
+    // 0x26193407
     // solve the ctf by calling this function
     function solveIt(string memory flag) external {
         bytes memory output = encryptFlag(flag);
